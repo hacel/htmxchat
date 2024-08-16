@@ -1,0 +1,62 @@
+package templates
+
+import "time"
+
+type Message struct {
+	HEADERS map[string]any `json:"HEADERS"`
+	Time    time.Time
+	Author  string
+	Color   string
+	Content string `json:"chat_message"`
+}
+
+templ RenderMessage(msg *Message) {
+	<div id="chat_room" hx-swap-oob="beforeend">
+		<div>
+			<span class="text-gray-500">
+				if time.Since(msg.Time) >= time.Hour * 24 {
+					{ msg.Time.Format("2006/01/02 3:04PM") }
+				} else {
+					{ msg.Time.Format("3:04PM") }
+				}
+			</span>
+			<span class={ "bg-" + msg.Color + "-100 text-" + msg.Color + "-800 rounded" }>{ msg.Author }</span>:
+			<span>{ msg.Content }</span>
+		</div>
+	</div>
+}
+
+templ Index() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>sammar</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<script src="https://unpkg.com/htmx.org@2.0.1/dist/htmx.min.js"></script>
+			<script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
+			<link href="/static/main.css" rel="stylesheet"/>
+		</head>
+		<body class="flex h-screen items-center justify-center bg-gray-200">
+			<div hx-ext="ws" ws-connect="/ws" class="flex h-5/6 w-5/6 flex-col rounded-lg bg-white p-5 shadow-lg">
+				<div id="chat_room" class="mb-5 h-full overflow-y-auto rounded border border-gray-300 p-2"></div>
+				<input
+					ws-send
+					hx-on::ws-after-send="this.value = ''"
+					name="chat_message"
+					type="text"
+					autofocus
+					autocomplete="off"
+					placeholder="Type your message..."
+					class="w-full rounded border border-gray-300 p-2"
+				/>
+			</div>
+		</body>
+		<script type="text/javascript">
+			document.addEventListener("htmx:wsAfterMessage", (e) => {
+				const elt = document.getElementById("chat_room");
+				elt.scrollTop = elt.scrollHeight;
+			});
+		</script>
+	</html>
+}
