@@ -7,17 +7,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
-	"strings"
 	"sync"
 	"time"
 
+	"github.com/a-h/templ"
 	"github.com/gorilla/websocket"
 	"github.com/hacel/htmxchat/templates"
-
-	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -109,8 +106,7 @@ func ws(c echo.Context) error {
 	}
 
 	// Get author and colorize
-	ip, _, _ := strings.Cut(ws.RemoteAddr().String(), ":")
-	author := shortHash(ip)
+	author := shortHash(c.RealIP() + c.Request().UserAgent())
 	color := colorizationer(author)
 	msg.Author = author
 	msg.Color = color
