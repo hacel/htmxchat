@@ -164,7 +164,7 @@ func Render(ctx echo.Context, statusCode int, t templ.Component) error {
 }
 
 func main() {
-	sqlite, err := sql.Open("sqlite3", "sqlite.db?cache=shared")
+	sqlite, err := sql.Open("sqlite3", "var/sqlite.db?cache=shared")
 	if err != nil {
 		panic(err)
 	}
