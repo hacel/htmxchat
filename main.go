@@ -149,7 +149,7 @@ func ws(c echo.Context) error {
 	}
 }
 
-// This custom Render replaces Echo's echo.Context.Render() with templ's templ.Component.Render().
+// Render replaces Echo's echo.Context.Render() with templ's templ.Component.Render().
 func Render(ctx echo.Context, statusCode int, t templ.Component) error {
 	buf := templ.GetBuffer()
 	defer templ.ReleaseBuffer(buf)
