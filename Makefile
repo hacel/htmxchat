@@ -4,11 +4,11 @@ all:
 
 # run templ generation in watch mode to detect all .templ files.
 live/templ:
-	templ generate --watch
+	go tool templ generate --watch
 
 # run air to detect any go file changes to re-build and re-run the server.
 live/server:
-	air --build.exclude_dir "node_modules"
+	go tool air --build.exclude_dir "node_modules"
 
 # run tailwindcss to generate the styles.css bundle in watch mode.
 live/tailwind:
