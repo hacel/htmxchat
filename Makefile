@@ -1,5 +1,5 @@
 all:
-	templ generate
+	go tool templ generate
 	npx tailwindcss -o ./static/main.css --minify
 
 # run templ generation in watch mode to detect all .templ files.
