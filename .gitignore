@@ -2,5 +2,3 @@ node_modules
 sqlite.db
 templates/*.txt
 tmp
-package-lock.json
-package.json
