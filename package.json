@@ -1,4 +1,15 @@
 {
+  "scripts": {
+    "build": "npm run build:vendor && npm run build:css",
+    "build:css": "tailwindcss -i ./templates/input.css -o ./static/main.css --minify",
+    "build:vendor": "cp ./node_modules/htmx.org/dist/htmx.min.js ./static/htmx.min.js && cp ./node_modules/htmx-ext-ws/dist/ws.min.js ./static/ws.min.js && cp ./node_modules/htmx.org/LICENSE ./third_party/htmx.LICENSE && cp ./node_modules/htmx-ext-ws/LICENSE ./third_party/htmx-ext-ws.LICENSE",
+    "format": "prettier --write 'templates/*.templ' 'static/app.js'",
+    "format:check": "prettier --check 'templates/*.templ' 'static/app.js'"
+  },
+  "dependencies": {
+    "htmx-ext-ws": "2.0.4",
+    "htmx.org": "2.0.10"
+  },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.11",
     "prettier": "^3.6.2",
@@ -14,7 +25,9 @@
     "overrides": [
       {
         "files": "*.templ",
-        "options": { "parser": "tailwindcss-extra-plus" }
+        "options": {
+          "parser": "tailwindcss-extra-plus"
+        }
       }
     ]
   }

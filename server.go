@@ -119,10 +119,11 @@ func newHTTPServer(chat *chatServer) *echo.Echo {
 	e.Use(middleware.Recover())
 	e.Use(middleware.BodyLimit("16K"))
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-		XSSProtection:      "0",
-		ContentTypeNosniff: "nosniff",
-		XFrameOptions:      "DENY",
-		ReferrerPolicy:     "same-origin",
+		XSSProtection:         "0",
+		ContentTypeNosniff:    "nosniff",
+		XFrameOptions:         "DENY",
+		ReferrerPolicy:        "same-origin",
+		ContentSecurityPolicy: "default-src 'self'; connect-src 'self' ws: wss:; script-src 'self'; style-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
 	}))
 
 	e.StaticFS("/static/", echo.MustSubFS(staticAssets, "static"))
@@ -272,7 +273,7 @@ func (chat *chatServer) broadcast(payload []byte) {
 func (chat *chatServer) closeAll() {
 	for _, client := range chat.clientSnapshot() {
 		chat.removeClient(client)
-		client.close(websocket.CloseGoingAway, "server shutting down")
+		client.close(websocket.CloseServiceRestart, "server restarting")
 	}
 }
 

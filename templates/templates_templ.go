@@ -14,7 +14,7 @@ type Message struct {
 	Time    time.Time
 	Author  string
 	Color   string
-	Content string `json:"chat_message"`
+	Content string
 }
 
 func RenderMessage(msg *Message) templ.Component {
@@ -38,80 +38,93 @@ func RenderMessage(msg *Message) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"chat_room\" hx-swap-oob=\"beforeend\"><div><span class=\"text-gray-500 dark:text-gray-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"chat_room\" hx-swap-oob=\"beforeend\"><article class=\"text-sm leading-relaxed sm:text-base\"><time datetime=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Time.Format(time.RFC3339))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 15, Col: 49}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-local-time class=\"mr-2 text-xs whitespace-nowrap text-slate-500 dark:text-slate-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if time.Since(msg.Time) >= time.Hour*24 {
-			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Time.Format("2006/01/02 3:04PM"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 17, Col: 43}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Time.Format("3:04PM"))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Time.Format("2006/01/02 3:04 PM"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 19, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 17, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+		} else {
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Time.Format("3:04 PM"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 19, Col: 33}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</time> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 = []any{"bg-" + msg.Color + "-100 text-" + msg.Color + "-900 dark:bg-" + msg.Color + "-700 dark:text-" + msg.Color + "-100 rounded"}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
+		var templ_7745c5c3_Var5 = []any{"bg-" + msg.Color + "-100 text-" + msg.Color + "-900 dark:bg-" + msg.Color + "-700 dark:text-" + msg.Color + "-100 rounded px-1.5 py-0.5 font-semibold"}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var4).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Author)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 22, Col: 155}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span><span>:</span> <span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Content)
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Author)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 22, Col: 198}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 22, Col: 183}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><span aria-hidden=\"true\">:</span> <span class=\"[overflow-wrap:anywhere] whitespace-pre-wrap\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(msg.Content)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 23, Col: 75}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></article></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -135,12 +148,12 @@ func Index() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!doctype html><html lang=\"en\"><head><title>sammar</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, interactive-widget=resizes-content\"><script src=\"https://unpkg.com/htmx.org@2.0.1/dist/htmx.min.js\"></script><script src=\"https://unpkg.com/htmx-ext-ws@2.0.0/ws.js\"></script><link href=\"/static/main.css\" rel=\"stylesheet\"></head><body hx-ext=\"ws\" ws-connect=\"/ws\" class=\"flex h-dvh flex-col space-y-2 bg-gray-200 p-4 font-mono text-gray-900 dark:bg-gray-900 dark:text-gray-100\"><div id=\"chat_room\" class=\"flex-1 overflow-y-auto rounded border border-gray-300 bg-gray-100 p-4 dark:border-gray-600 dark:bg-gray-800\"></div><input ws-send hx-on::ws-after-send=\"this.value = ''\" name=\"chat_message\" type=\"text\" autofocus autocomplete=\"off\" placeholder=\"Type a message...\" class=\"rounded border border-gray-300 bg-gray-100 p-2 dark:border-gray-600 dark:bg-gray-800\"></body><script type=\"text/javascript\">\n\t\t\tdocument.addEventListener(\"htmx:wsAfterMessage\", (e) => {\n\t\t\t\tconst elt = document.getElementById(\"chat_room\");\n\t\t\t\telt.scrollTop = elt.scrollHeight;\n\t\t\t});\n\t\t</script></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!doctype html><html lang=\"en\"><head><title>sammar chat</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content\"><meta name=\"theme-color\" content=\"#0f172a\" media=\"(prefers-color-scheme: dark)\"><meta name=\"theme-color\" content=\"#f8fafc\" media=\"(prefers-color-scheme: light)\"><link href=\"/static/main.css\" rel=\"stylesheet\"><script src=\"/static/htmx.min.js\" defer></script><script src=\"/static/ws.min.js\" defer></script><script src=\"/static/app.js\" defer></script></head><body hx-ext=\"ws\" ws-connect=\"/ws\" class=\"app-viewport overflow-hidden bg-slate-100 font-mono text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100\"><main class=\"safe-area mx-auto flex h-full w-full max-w-4xl flex-col gap-3 sm:gap-4\"><header class=\"flex shrink-0 items-end justify-between gap-3\"><div><h1 class=\"text-lg font-bold tracking-tight sm:text-xl\">sammar chat</h1><p id=\"connection_status\" class=\"connection-status text-xs text-slate-500 dark:text-slate-400\" role=\"status\" aria-live=\"polite\" data-state=\"connecting\">Connecting…</p></div><p class=\"text-xs text-slate-500 dark:text-slate-400\">Messages are public</p></header><section id=\"chat_room\" class=\"min-h-0 flex-1 space-y-1.5 overflow-y-auto overscroll-contain rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:space-y-2 sm:p-4 dark:border-slate-700 dark:bg-slate-900\" role=\"log\" aria-label=\"Chat messages\" aria-live=\"polite\" aria-relevant=\"additions\" tabindex=\"0\"></section><form id=\"message_form\" ws-send class=\"flex shrink-0 gap-2\"><label for=\"message_input\" class=\"sr-only\">Message</label> <input id=\"message_input\" name=\"chat_message\" type=\"text\" autocomplete=\"off\" enterkeyhint=\"send\" maxlength=\"1000\" required placeholder=\"Type a message…\" class=\"min-h-11 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-base shadow-sm outline-none placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 dark:border-slate-700 dark:bg-slate-900 dark:placeholder:text-slate-500 dark:focus:border-sky-400 dark:focus:ring-sky-400/30\"> <button type=\"submit\" class=\"min-h-11 shrink-0 rounded-xl bg-sky-600 px-4 py-2 font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 active:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400\">Send</button></form></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

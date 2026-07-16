@@ -98,8 +98,11 @@ func TestHTTPRoutes(t *testing.T) {
 		statusCode int
 		contains   string
 	}{
-		{path: "/", statusCode: http.StatusOK, contains: "<!doctype html>"},
+		{path: "/", statusCode: http.StatusOK, contains: `<form id="message_form" ws-send`},
 		{path: "/static/main.css", statusCode: http.StatusOK, contains: "tailwindcss"},
+		{path: "/static/app.js", statusCode: http.StatusOK, contains: "htmx:wsOpen"},
+		{path: "/static/htmx.min.js", statusCode: http.StatusOK, contains: "var htmx=function"},
+		{path: "/static/ws.min.js", statusCode: http.StatusOK, contains: "htmx.defineExtension"},
 		{path: "/healthz", statusCode: http.StatusNoContent},
 	} {
 		t.Run(test.path, func(t *testing.T) {
@@ -113,5 +116,13 @@ func TestHTTPRoutes(t *testing.T) {
 				t.Errorf("GET %s body does not contain %q", test.path, test.contains)
 			}
 		})
+	}
+
+	request := httptest.NewRequest(http.MethodGet, "/", nil)
+	recorder := httptest.NewRecorder()
+	e.ServeHTTP(recorder, request)
+	policy := recorder.Header().Get("Content-Security-Policy")
+	if policy == "" || strings.Contains(policy, "unsafe-inline") {
+		t.Errorf("Content-Security-Policy = %q", policy)
 	}
 }
