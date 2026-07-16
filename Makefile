@@ -1,19 +1,41 @@
-all:
-	go tool templ generate
-	npx tailwindcss -i ./templates/input.css -o ./static/main.css --minify
+.PHONY: all deps generate format test check build live live/templ live/server live/tailwind
 
-# run templ generation in watch mode to detect all .templ files.
+all: generate
+
+deps:
+	go mod download
+	npm ci --ignore-scripts
+
+generate:
+	go tool templ generate
+	npm run build
+
+format:
+	go fmt ./...
+	npm run format
+	$(MAKE) generate
+
+test:
+	go test -race ./...
+
+check: generate
+	go vet ./...
+	go test -race ./...
+	npm run format:check
+	npm audit --audit-level=high
+	git diff --exit-code -- templates/templates_templ.go static third_party
+
+build: generate
+	CGO_ENABLED=1 go build -trimpath -o htmxchat .
+
 live/templ:
 	go tool templ generate --watch
 
-# run air to detect any go file changes to re-build and re-run the server.
 live/server:
-	go tool air --build.exclude_dir "node_modules"
+	go tool air --build.exclude_dir node_modules
 
-# run tailwindcss to generate the styles.css bundle in watch mode.
 live/tailwind:
-	npx tailwindcss -i ./templates/input.css -o ./static/main.css --minify --watch
+	npm run build:css -- --watch
 
-# start all 3 watch processes in parallel.
 live:
-	make -j3 live/tailwind live/templ live/server
+	$(MAKE) -j3 live/tailwind live/templ live/server

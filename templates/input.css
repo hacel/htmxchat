@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+
+@source "./templates.templ";
 
 @source inline("{dark:,}{text,bg}-{amber,blue,cyan,emerald,fuchsia,gray,green,indigo,lime,neutral,orange,pink,purple,red,rose,sky,slate,stone,teal,violet,yellow,zinc}-{50,{100..900..100},950}");
 

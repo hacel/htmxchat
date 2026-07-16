@@ -1,0 +1,9 @@
+.git
+.github
+node_modules
+tmp
+var
+htmxchat
+*.db
+*.db-shm
+*.db-wal

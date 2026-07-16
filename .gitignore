@@ -1,4 +1,7 @@
-node_modules
-sqlite.db
-templates/*.txt
-tmp
+/htmxchat
+/node_modules/
+/tmp/
+/var/
+*.db
+*.db-shm
+*.db-wal
