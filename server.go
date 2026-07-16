@@ -21,6 +21,7 @@ import (
 	"github.com/hacel/htmxchat/templates"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/time/rate"
 )
 
 const (
@@ -31,6 +32,8 @@ const (
 	pongTimeout        = 60 * time.Second
 	pingInterval       = 45 * time.Second
 	clientQueueSize    = 32
+	messageRate        = rate.Limit(2)
+	messageBurst       = 5
 )
 
 var colors = []string{
@@ -173,12 +176,17 @@ func (chat *chatServer) handleWebSocket(c echo.Context) error {
 	}()
 
 	author := authorID(c.RealIP() + "\x00" + c.Request().UserAgent())
+	messageLimiter := rate.NewLimiter(messageRate, messageBurst)
 	for {
 		_, payload, err := connection.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
 				c.Logger().Warnf("websocket read failed: %v", err)
 			}
+			return nil
+		}
+		if !messageLimiter.Allow() {
+			client.close(websocket.ClosePolicyViolation, "message rate limit exceeded")
 			return nil
 		}
 

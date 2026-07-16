@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/hacel/htmxchat/templates"
 )
 
@@ -124,5 +125,52 @@ func TestHTTPRoutes(t *testing.T) {
 	policy := recorder.Header().Get("Content-Security-Policy")
 	if policy == "" || strings.Contains(policy, "unsafe-inline") {
 		t.Errorf("Content-Security-Policy = %q", policy)
+	}
+}
+
+func TestWebSocketStoresAndBroadcastsMessage(t *testing.T) {
+	t.Parallel()
+	database, err := openDatabase(":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { database.Close() })
+	e := newHTTPServer(newChatServer(database))
+	httpServer := httptest.NewServer(e)
+	t.Cleanup(httpServer.Close)
+
+	wsURL := "ws" + strings.TrimPrefix(httpServer.URL, "http") + "/ws"
+	connection, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { connection.Close() })
+	if err := connection.SetReadDeadline(time.Now().Add(5 * time.Second)); err != nil {
+		t.Fatal(err)
+	}
+	if err := connection.WriteJSON(map[string]string{
+		"chat_message": "hello from websocket",
+		"Author":       "spoofed",
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	_, response, err := connection.ReadMessage()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(response), "hello from websocket") {
+		t.Errorf("response does not contain message: %s", response)
+	}
+	if strings.Contains(string(response), "spoofed") {
+		t.Errorf("response contains client-supplied author: %s", response)
+	}
+
+	messages, err := recentMessages(context.Background(), database, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(messages) != 1 || messages[0].Content != "hello from websocket" {
+		t.Fatalf("stored messages = %#v", messages)
 	}
 }
