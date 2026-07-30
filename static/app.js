@@ -9,7 +9,9 @@
   }
 
   const reconnectingCloseCodes = new Set([1006, 1011, 1012, 1013]);
+  const visualViewport = window.visualViewport;
   let shouldStickToBottom = true;
+  let viewportAnimationFrame;
 
   const isNearBottom = () =>
     room.scrollHeight - room.scrollTop - room.clientHeight < 80;
@@ -17,6 +19,26 @@
   const setConnectionStatus = (state, label) => {
     status.dataset.state = state;
     status.textContent = label;
+  };
+
+  const syncViewportHeight = () => {
+    if (visualViewport && document.activeElement === input) {
+      document.documentElement.style.setProperty(
+        "--keyboard-viewport-height",
+        `${Math.round(visualViewport.height)}px`,
+      );
+    } else {
+      document.documentElement.style.removeProperty(
+        "--keyboard-viewport-height",
+      );
+    }
+
+    if (shouldStickToBottom) {
+      cancelAnimationFrame(viewportAnimationFrame);
+      viewportAnimationFrame = requestAnimationFrame(() => {
+        room.scrollTop = room.scrollHeight;
+      });
+    }
   };
 
   const localizeTimes = () => {
@@ -87,6 +109,11 @@
     input.value = "";
     input.focus({ preventScroll: true });
   });
+
+  visualViewport?.addEventListener("resize", syncViewportHeight);
+  visualViewport?.addEventListener("scroll", syncViewportHeight);
+  input.addEventListener("focus", syncViewportHeight);
+  input.addEventListener("blur", syncViewportHeight);
 
   if (window.matchMedia("(pointer: fine)").matches) {
     input.focus({ preventScroll: true });
