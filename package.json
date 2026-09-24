@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "htmx-ext-ws": "2.0.4",
-    "htmx.org": "2.0.10"
+    "htmx.org": "4.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.11",
-    "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.6.14",
+    "@tailwindcss/cli": "^4.3.3",
+    "prettier": "^3.9.8",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "prettier-plugin-tailwindcss-extra-plus": "^0.3.1",
     "tailwindcss": "^4.1.11"
   },
